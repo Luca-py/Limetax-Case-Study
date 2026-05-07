@@ -24,10 +24,10 @@ const DIMENSION_NAMES: Record<DimensionKey, string> = {
 };
 
 export const DEFAULT_DIMENSION_WEIGHTS: DimensionWeights = {
-  optimizationLeverage: 35,
-  integrationEase: 30,
-  growthPlatform: 20,
-  dealAttractiveness: 15,
+  optimizationLeverage: 40,
+  integrationEase: 25,
+  growthPlatform: 25,
+  dealAttractiveness: 10,
 };
 
 function formatPercent(value: number): string {
@@ -225,7 +225,7 @@ function metricSpecsByDimension() {
       {
         label: "Special Consulting Share",
         weight: 0.25,
-        higherIsBetter: true,
+        higherIsBetter: false,
         valueGetter: (firm) => firm.specialConsultingShare,
         rawFormatter: (firm) => formatPercent(firm.specialConsultingShare),
       },
@@ -253,29 +253,6 @@ function metricSpecsByDimension() {
         higherIsBetter: false,
         valueGetter: (firm) => firm.zinslastRatio,
         rawFormatter: (firm) => (firm.zinslastRatio == null ? "n/a" : formatPercent(firm.zinslastRatio)),
-      },
-      {
-        label: "Revenue Volatility",
-        weight: 0.15,
-        higherIsBetter: false,
-        valueGetter: (firm) => {
-          const values = firm.monthlyRevenue.filter((value) => Number.isFinite(value));
-          if (values.length === 0) return undefined;
-          const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
-          if (mean === 0) return undefined;
-          const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
-          const stddev = Math.sqrt(variance);
-          return stddev / mean;
-        },
-        rawFormatter: (firm) => {
-          const values = firm.monthlyRevenue.filter((value) => Number.isFinite(value));
-          if (values.length === 0) return "n/a";
-          const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
-          if (mean === 0) return "n/a";
-          const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
-          const stddev = Math.sqrt(variance);
-          return formatPercent(stddev / mean);
-        },
       },
     ] satisfies MetricSpec[],
   };

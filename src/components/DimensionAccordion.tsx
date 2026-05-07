@@ -15,6 +15,12 @@ function scoreColor(score: number): string {
 export function DimensionAccordion({ dimension }: DimensionAccordionProps) {
   const [open, setOpen] = useState(false);
 
+  const scoreArrow = (score: number): { icon: string; className: string } => {
+    if (score >= 7) return { icon: "↑", className: "text-emerald-600" };
+    if (score >= 4) return { icon: "→", className: "text-amber-500" };
+    return { icon: "↓", className: "text-rose-600" };
+  };
+
   return (
     <div className="rounded-md border border-slate-200 bg-white">
       <button
@@ -44,10 +50,14 @@ export function DimensionAccordion({ dimension }: DimensionAccordionProps) {
                   <td className="px-3 py-2">{metric.label}</td>
                   <td className="px-3 py-2">{metric.rawValue}</td>
                   <td className="px-3 py-2 font-mono">
-                    {metric.score.toFixed(1)}{" "}
-                    <span className={metric.higherIsBetter ? "text-emerald-600" : "text-rose-600"}>
-                      {metric.higherIsBetter ? "↑" : "↓"}
-                    </span>
+                    {(() => {
+                      const arrow = scoreArrow(metric.score);
+                      return (
+                        <>
+                          {metric.score.toFixed(1)} <span className={arrow.className}>{arrow.icon}</span>
+                        </>
+                      );
+                    })()}
                   </td>
                 </tr>
               ))}

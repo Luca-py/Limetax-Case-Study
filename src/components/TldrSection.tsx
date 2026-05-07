@@ -1,11 +1,9 @@
-import { SparklineChart } from "./SparklineChart";
-import type { FirmRawData, FirmScore } from "../types";
+import type { FirmScore } from "../types";
 
 interface TldrSectionProps {
   tldr: string | null;
   isLoading: boolean;
   error: string | null;
-  firms: FirmRawData[];
   firmScores: FirmScore[];
 }
 
@@ -15,7 +13,7 @@ function fitLabel(score: number): string {
   return "Needs work";
 }
 
-export function TldrSection({ tldr, isLoading, error, firms, firmScores }: TldrSectionProps) {
+export function TldrSection({ tldr, isLoading, error, firmScores }: TldrSectionProps) {
   const sorted = [...firmScores].sort((a, b) => b.opportunityScore - a.opportunityScore);
   const topChoice = sorted[0];
   const highestUpside = sorted[0];
@@ -69,9 +67,6 @@ export function TldrSection({ tldr, isLoading, error, firms, firmScores }: TldrS
           <p className="mt-1 text-lg font-semibold text-slate-800">{highestIntegrationEffort?.firm.name ?? "-"}</p>
           <p className="text-sm font-semibold text-rose-600">High</p>
         </div>
-      </div>
-      <div className="mt-4 rounded-lg border border-slate-100 bg-slate-50 px-2 py-1">
-        <SparklineChart firms={firms} />
       </div>
     </section>
   );

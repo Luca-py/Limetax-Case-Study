@@ -205,7 +205,7 @@ export default function App() {
           <UploadZone onFileSelected={handleUpload} isLoading={isParsing} />
         ) : (
           <div className="space-y-6">
-            <TldrSection tldr={tldr} isLoading={tldrLoading} error={tldrError} firms={rawFirms} firmScores={firmScores} />
+            <TldrSection tldr={tldr} isLoading={tldrLoading} error={tldrError} firmScores={firmScores} />
 
             <section>
               <div className="mb-4 flex items-center justify-between">
