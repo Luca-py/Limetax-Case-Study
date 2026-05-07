@@ -11,6 +11,36 @@ interface WinsRisks {
   risks: string[];
 }
 
+function formatMetricDirection(higherIsBetter: boolean): string {
+  return higherIsBetter ? "higher is better" : "lower is better";
+}
+
+function buildMetricContext(firm: FirmScore): string {
+  const metrics = firm.dimensions.flatMap((dimension) =>
+    dimension.metrics.map((metric) => ({
+      dimension: dimension.name,
+      label: metric.label,
+      score: metric.score,
+      rawValue: metric.rawValue,
+      higherIsBetter: metric.higherIsBetter,
+    }))
+  );
+
+  const sortedByScore = [...metrics].sort((a, b) => b.score - a.score);
+  const topStrengths = sortedByScore.slice(0, 3);
+  const topRisks = [...sortedByScore].reverse().slice(0, 3);
+
+  const formatLine = (entry: (typeof metrics)[number]) =>
+    `${entry.dimension} > ${entry.label}: raw=${entry.rawValue}, score=${entry.score.toFixed(2)}, direction=${formatMetricDirection(entry.higherIsBetter)}`;
+
+  return [
+    "Top strengths by metric score:",
+    ...topStrengths.map((entry) => `- ${formatLine(entry)}`),
+    "Top risks by metric score:",
+    ...topRisks.map((entry) => `- ${formatLine(entry)}`),
+  ].join("\n");
+}
+
 export async function chatCompletion(messages: Message[]): Promise<string> {
   const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY as string | undefined;
   const model = import.meta.env.VITE_OPENROUTER_MODEL as string | undefined;
@@ -76,6 +106,7 @@ function parseWinsRisks(payload: string): WinsRisks {
 }
 
 export async function generateFirmWinsRisks(firm: FirmScore, language: PromptLanguage): Promise<WinsRisks> {
+  const metricContext = buildMetricContext(firm);
   const payload = await chatCompletion([
     {
       role: "system",
@@ -96,7 +127,7 @@ export async function generateFirmWinsRisks(firm: FirmScore, language: PromptLan
         },
         null,
         2
-      )}\n\nReturn JSON in this exact format:\n{\n  "wins": ["win 1 (max 12 words)", "win 2 (max 12 words)", "win 3 (max 12 words)"],\n  "risks": ["risk 1 (max 12 words)", "risk 2 (max 12 words)", "risk 3 (max 12 words)"]\n}`,
+      )}\n\nMetric direction context:\n${metricContext}\n\nRules:\n- Use metric scores first; higher score = stronger win, lower score = stronger risk.\n- Respect direction. If direction says "lower is better", a LOW raw value is positive and a HIGH raw value is negative.\n- Do not write a win that praises a high value when direction is "lower is better".\n- Keep each bullet factual and specific to this firm.\n\nReturn JSON in this exact format:\n{\n  "wins": ["win 1 (max 12 words)", "win 2 (max 12 words)", "win 3 (max 12 words)"],\n  "risks": ["risk 1 (max 12 words)", "risk 2 (max 12 words)", "risk 3 (max 12 words)"]\n}`,
     },
   ]);
 

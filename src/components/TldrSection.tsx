@@ -13,6 +13,17 @@ function fitLabel(score: number): string {
   return "Needs work";
 }
 
+function renderInlineBold(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, index) => {
+    const isBold = part.startsWith("**") && part.endsWith("**") && part.length > 4;
+    if (isBold) {
+      return <strong key={`bold-${index}`}>{part.slice(2, -2)}</strong>;
+    }
+    return <span key={`text-${index}`}>{part}</span>;
+  });
+}
+
 export function TldrSection({ tldr, isLoading, error, firmScores }: TldrSectionProps) {
   const sorted = [...firmScores].sort((a, b) => b.opportunityScore - a.opportunityScore);
   const topChoice = sorted[0];
@@ -45,7 +56,7 @@ export function TldrSection({ tldr, isLoading, error, firmScores }: TldrSectionP
           {!isLoading && error && <p className="mt-2 text-sm text-amber-600">{error}</p>}
           {!isLoading && !error && (
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
-              {tldr ?? "Connect your OpenRouter key in .env to generate portfolio commentary."}
+              {renderInlineBold(tldr ?? "Connect your OpenRouter key in .env to generate portfolio commentary.")}
             </p>
           )}
           <p className="mt-2 text-xs text-slate-400">Analysis generated just now</p>

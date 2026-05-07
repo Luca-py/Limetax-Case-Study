@@ -19,6 +19,8 @@ type WinsRisksMap = Record<
   }
 >;
 
+const WINS_RISKS_PROMPT_VERSION = "v2-direction-aware";
+
 const DEFAULT_FILTERS: DashboardFilters = {
   minEbitdaMargin: 0,
   minFte: 0,
@@ -117,14 +119,14 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [firmScores, language]);
+  }, [firmScores, language, WINS_RISKS_PROMPT_VERSION]);
 
   useEffect(() => {
     if (!firmScores.length || !hasOpenRouterEnv()) return;
 
     let cancelled = false;
     firmScores.forEach((firm) => {
-      const cacheKey = `${language}:${scoreHash(firm)}`;
+      const cacheKey = `${WINS_RISKS_PROMPT_VERSION}:${language}:${scoreHash(firm)}`;
       const cached = winsRisksCache.current.get(cacheKey);
       if (cached) {
         setWinsRisksMap((previous) => ({
