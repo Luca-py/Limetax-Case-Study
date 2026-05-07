@@ -107,7 +107,7 @@ export function SettingsPanel({
           <h3 className="text-sm font-semibold text-slate-800">Thresholds / Filters</h3>
           <div className="mt-3 space-y-3 text-sm">
             <label className="block">
-              <span className="mb-1 block text-slate-600">Minimum EBITDA margin (%)</span>
+              <span className="mb-1 block text-slate-600">Minimum annual EBITDA margin (%)</span>
               <input
                 className="w-full rounded border border-slate-300 bg-white px-2 py-1 text-slate-700"
                 type="number"

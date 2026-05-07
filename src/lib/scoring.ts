@@ -47,7 +47,7 @@ function overheadCostsPerFte(firm: FirmRawData): number | undefined {
 }
 
 function mandatesPerFte(firm: FirmRawData): number | undefined {
-  return firm.fteTotal > 0 ? firm.activeMandates / firm.fteTotal : undefined;
+  return firm.fteSpecialists > 0 ? firm.activeMandates / firm.fteSpecialists : undefined;
 }
 
 function normalizeMetric(values: Array<number | undefined>, index: number, higherIsBetter: boolean): number | undefined {
@@ -126,7 +126,7 @@ function metricSpecsByDimension() {
   return {
     optimizationLeverage: [
       {
-        label: "Revenue / FTE",
+        label: "Annual Revenue / FTE",
         weight: 0.25,
         higherIsBetter: false,
         valueGetter: annualRevenuePerFte,
@@ -136,7 +136,7 @@ function metricSpecsByDimension() {
         },
       },
       {
-        label: "Overhead Costs / FTE",
+        label: "Annual Overhead Costs / FTE",
         weight: 0.25,
         higherIsBetter: false,
         valueGetter: overheadCostsPerFte,
@@ -227,7 +227,7 @@ function metricSpecsByDimension() {
         rawFormatter: (firm) => String(firm.activeMandates),
       },
       {
-        label: "Revenue Growth",
+        label: "Monthly Revenue Growth (Jan-Dec)",
         weight: 0.35,
         higherIsBetter: true,
         valueGetter: (firm) => {
@@ -269,7 +269,7 @@ function metricSpecsByDimension() {
         rawFormatter: (firm) => firm.ueberstundenquote,
       },
       {
-        label: "Interest Burden / Revenue",
+        label: "Interest Burden / Annual Revenue",
         weight: 0.2,
         higherIsBetter: false,
         valueGetter: (firm) => firm.zinslastRatio,

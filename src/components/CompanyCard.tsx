@@ -31,7 +31,11 @@ export function CompanyCard({ firmScore, winsRisks }: CompanyCardProps) {
   const badge = fitLabel(firmScore.opportunityScore);
   const infoPoints = [
     { label: "Employees", value: String(firmScore.firm.fteTotal), icon: <Users className="h-3.5 w-3.5" /> },
-    { label: "Revenue (FY)", value: `${(firmScore.firm.revenue / 1_000_000).toFixed(1)} Mio. EUR`, icon: <CircleCheck className="h-3.5 w-3.5" /> },
+    {
+      label: "Annual Revenue",
+      value: `${(firmScore.firm.revenue / 1_000_000).toFixed(1)} Mio. EUR`,
+      icon: <CircleCheck className="h-3.5 w-3.5" />,
+    },
   ];
 
   return (
