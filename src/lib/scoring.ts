@@ -25,8 +25,8 @@ const DIMENSION_NAMES: Record<DimensionKey, string> = {
 
 export const DEFAULT_DIMENSION_WEIGHTS: DimensionWeights = {
   optimizationLeverage: 40,
-  integrationEase: 25,
-  growthPlatform: 25,
+  integrationEase: 20,
+  growthPlatform: 30,
   dealAttractiveness: 10,
 };
 
@@ -36,6 +36,18 @@ function formatPercent(value: number): string {
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(value);
+}
+
+function annualRevenuePerFte(firm: FirmRawData): number | undefined {
+  return firm.fteTotal > 0 ? firm.revenue / firm.fteTotal : undefined;
+}
+
+function overheadCostsPerFte(firm: FirmRawData): number | undefined {
+  return firm.fteTotal > 0 ? firm.overheadCosts / firm.fteTotal : undefined;
+}
+
+function mandatesPerFte(firm: FirmRawData): number | undefined {
+  return firm.fteTotal > 0 ? firm.activeMandates / firm.fteTotal : undefined;
 }
 
 function normalizeMetric(values: Array<number | undefined>, index: number, higherIsBetter: boolean): number | undefined {
@@ -117,15 +129,21 @@ function metricSpecsByDimension() {
         label: "Revenue / FTE",
         weight: 0.25,
         higherIsBetter: false,
-        valueGetter: (firm) => (firm.fteTotal > 0 ? firm.revenue / firm.fteTotal : undefined),
-        rawFormatter: (firm) => formatCurrency(firm.fteTotal > 0 ? firm.revenue / firm.fteTotal : 0),
+        valueGetter: annualRevenuePerFte,
+        rawFormatter: (firm) => {
+          const value = annualRevenuePerFte(firm);
+          return value == null ? "n/a" : formatCurrency(value);
+        },
       },
       {
-        label: "Personnel Costs / FTE",
+        label: "Overhead Costs / FTE",
         weight: 0.25,
         higherIsBetter: false,
-        valueGetter: (firm) => (firm.fteTotal > 0 ? firm.personnelCosts / firm.fteTotal : undefined),
-        rawFormatter: (firm) => formatCurrency(firm.fteTotal > 0 ? firm.personnelCosts / firm.fteTotal : 0),
+        valueGetter: overheadCostsPerFte,
+        rawFormatter: (firm) => {
+          const value = overheadCostsPerFte(firm);
+          return value == null ? "n/a" : formatCurrency(value);
+        },
       },
       {
         label: "Honorar / Mandate",
@@ -138,8 +156,11 @@ function metricSpecsByDimension() {
         label: "Mandates / FTE",
         weight: 0.15,
         higherIsBetter: false,
-        valueGetter: (firm) => (firm.fteTotal > 0 ? firm.activeMandates / firm.fteTotal : undefined),
-        rawFormatter: (firm) => (firm.fteTotal > 0 ? (firm.activeMandates / firm.fteTotal).toFixed(2) : "n/a"),
+        valueGetter: mandatesPerFte,
+        rawFormatter: (firm) => {
+          const value = mandatesPerFte(firm);
+          return value == null ? "n/a" : value.toFixed(2);
+        },
       },
       {
         label: "Digitalization Level",

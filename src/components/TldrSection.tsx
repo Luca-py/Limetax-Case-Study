@@ -42,7 +42,7 @@ export function TldrSection({ tldr, isLoading, error, firmScores }: TldrSectionP
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <h2 className="text-3xl font-semibold text-slate-900">Your company decision</h2>
-      <div className="mt-4 grid gap-4 rounded-xl border border-slate-200 p-4 lg:grid-cols-[1.1fr_2.5fr_1fr_1fr_1fr]">
+      <div className="mt-4 grid gap-4 rounded-xl border border-slate-200 p-4 lg:grid-cols-[1.1fr_3fr_1.6fr]">
         <div className="rounded-lg bg-blue-50 p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Top Choice</p>
           <p className="mt-1 text-2xl font-semibold text-blue-700">{topChoice?.firm.name ?? "-"}</p>
@@ -61,22 +61,24 @@ export function TldrSection({ tldr, isLoading, error, firmScores }: TldrSectionP
           )}
           <p className="mt-2 text-xs text-slate-400">Analysis generated just now</p>
         </div>
-        <div>
-          <p className="text-xs font-medium text-slate-500">Highest Upside</p>
-          <p className="mt-1 text-lg font-semibold text-slate-800">{highestUpside?.firm.name ?? "-"}</p>
-          <p className="text-sm font-semibold text-blue-700">
-            {highestUpside ? `+${(highestUpside.opportunityScore / 100).toFixed(1)} score` : "-"}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs font-medium text-slate-500">Lowest Risk</p>
-          <p className="mt-1 text-lg font-semibold text-slate-800">{lowestRisk?.firm.name ?? "-"}</p>
-          <p className="text-sm font-semibold text-emerald-600">Moderate</p>
-        </div>
-        <div>
-          <p className="text-xs font-medium text-slate-500">Highest Integration Effort</p>
-          <p className="mt-1 text-lg font-semibold text-slate-800">{highestIntegrationEffort?.firm.name ?? "-"}</p>
-          <p className="text-sm font-semibold text-rose-600">High</p>
+        <div className="flex h-full flex-col gap-3">
+          <div className="flex flex-1 flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-lg bg-slate-50 p-3">
+            <p className="text-xs font-medium text-slate-500">Highest Upside</p>
+            <p className="text-lg font-semibold text-slate-800">{highestUpside?.firm.name ?? "-"}</p>
+            <p className="text-sm font-semibold text-blue-700">
+              {highestUpside ? `+${(highestUpside.opportunityScore / 100).toFixed(1)} score` : "-"}
+            </p>
+          </div>
+          <div className="flex flex-1 flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-lg bg-slate-50 p-3">
+            <p className="text-xs font-medium text-slate-500">Lowest Risk</p>
+            <p className="text-lg font-semibold text-slate-800">{lowestRisk?.firm.name ?? "-"}</p>
+            <p className="text-sm font-semibold text-emerald-600">Moderate</p>
+          </div>
+          <div className="flex flex-1 flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-lg bg-slate-50 p-3">
+            <p className="text-xs font-medium text-slate-500">Highest Integration Effort</p>
+            <p className="text-lg font-semibold text-slate-800">{highestIntegrationEffort?.firm.name ?? "-"}</p>
+            <p className="text-sm font-semibold text-rose-600">High</p>
+          </div>
         </div>
       </div>
     </section>

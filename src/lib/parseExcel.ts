@@ -152,7 +152,7 @@ function parseBwaSheet(sheetName: string, rows: unknown[][]) {
     overheadCosts: getOverall(/sachaufwand gesamt/, "Sachaufwand gesamt"),
     ebitda: getOverall(/^ebitda$/, "EBITDA"),
     ebitdaMargin: getOverall(/ebitda-?marge/, "EBITDA-Marge"),
-    zinslastRatio: getOverall(/zinsen.*aufwendungen/, "Zinslast / Umsatz"),
+    interestExpenses: getOverall(/zinsen.*aufwendungen/, "Zinsen & ähnliche Aufwendungen"),
     monthlyRevenue,
     warnings,
   };
@@ -245,9 +245,12 @@ export async function parseExcel(file: File): Promise<ParseExcelResult> {
     if (!digitalisierungsgrad) warnings.push("Could not parse metric: Digitalisierungsgrad");
     if (!ueberstundenquote) warnings.push("Could not parse metric: Überstundenquote");
 
+    const annualRevenue = requireNumber(parsed.revenue, "Gesamtleistung", warnings);
+    const interestExpenses = parsed.interestExpenses;
+
     const firm: FirmRawData = {
       name: parsed.name,
-      revenue: requireNumber(parsed.revenue, "Gesamtleistung", warnings),
+      revenue: annualRevenue,
       personnelCosts: requireNumber(parsed.personnelCosts, "Personalaufwand gesamt", warnings),
       overheadCosts: requireNumber(parsed.overheadCosts, "Sachaufwand gesamt", warnings),
       ebitda: requireNumber(parsed.ebitda, "EBITDA", warnings),
@@ -269,7 +272,7 @@ export async function parseExcel(file: File): Promise<ParseExcelResult> {
       fluktuation: requireNumber(parseFluktuation(getProfile(/fluktuation/)), "Fluktuation", warnings),
       krankenquote: requireNumber(parsePercent(getProfile(/krankenquote/)), "Krankenquote", warnings),
       ueberstundenquote: ueberstundenquote ?? "Moderat",
-      zinslastRatio: parsed.zinslastRatio,
+      zinslastRatio: interestExpenses == null || annualRevenue <= 0 ? undefined : interestExpenses / annualRevenue,
       warnings: warnings.map((message) => ({ code: "PARSE_WARNING", message })),
     };
 
