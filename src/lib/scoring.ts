@@ -24,9 +24,9 @@ const DIMENSION_NAMES: Record<DimensionKey, string> = {
 };
 
 export const DEFAULT_DIMENSION_WEIGHTS: DimensionWeights = {
-  optimizationLeverage: 40,
-  integrationEase: 20,
-  growthPlatform: 30,
+  optimizationLeverage: 35,
+  integrationEase: 30,
+  growthPlatform: 25,
   dealAttractiveness: 10,
 };
 
