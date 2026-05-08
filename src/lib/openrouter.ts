@@ -121,7 +121,7 @@ export async function generateFirmWinsRisks(firm: FirmScore, language: PromptLan
           keyMetrics: {
             revenue: firm.firm.revenue,
             ebitdaMargin: firm.firm.ebitdaMargin,
-            mandates: firm.firm.activeMandates,
+            clients: firm.firm.activeMandates,
             digitalisierungsgrad: firm.firm.digitalisierungsgrad,
           },
         },

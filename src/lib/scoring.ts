@@ -46,8 +46,15 @@ function overheadCostsPerFte(firm: FirmRawData): number | undefined {
   return firm.fteTotal > 0 ? firm.overheadCosts / firm.fteTotal : undefined;
 }
 
-function mandatesPerFte(firm: FirmRawData): number | undefined {
+function clientsPerFte(firm: FirmRawData): number | undefined {
   return firm.fteSpecialists > 0 ? firm.activeMandates / firm.fteSpecialists : undefined;
+}
+
+function yearlyRevenueGrowthJanToDec(firm: FirmRawData): number | undefined {
+  const jan = firm.monthlyRevenue[0];
+  const dec = firm.monthlyRevenue[11];
+  if (!jan) return undefined;
+  return (dec - jan) / jan;
 }
 
 function normalizeMetric(values: Array<number | undefined>, index: number, higherIsBetter: boolean): number | undefined {
@@ -146,19 +153,19 @@ function metricSpecsByDimension() {
         },
       },
       {
-        label: "Honorar / Mandate",
+        label: "Fee / Client",
         weight: 0.15,
         higherIsBetter: false,
         valueGetter: (firm) => firm.avgHonorarPerMandat,
         rawFormatter: (firm) => formatCurrency(firm.avgHonorarPerMandat),
       },
       {
-        label: "Mandates / FTE",
+        label: "Clients / FTE",
         weight: 0.15,
         higherIsBetter: false,
-        valueGetter: mandatesPerFte,
+        valueGetter: clientsPerFte,
         rawFormatter: (firm) => {
-          const value = mandatesPerFte(firm);
+          const value = clientsPerFte(firm);
           return value == null ? "n/a" : value.toFixed(2);
         },
       },
@@ -220,27 +227,20 @@ function metricSpecsByDimension() {
     ] satisfies MetricSpec[],
     growthPlatform: [
       {
-        label: "Active Mandates",
+        label: "Active Clients",
         weight: 0.4,
         higherIsBetter: true,
         valueGetter: (firm) => firm.activeMandates,
         rawFormatter: (firm) => String(firm.activeMandates),
       },
       {
-        label: "Monthly Revenue Growth (Jan-Dec)",
+        label: "Yearly Revenue Growth (Jan-Dec)",
         weight: 0.35,
         higherIsBetter: true,
-        valueGetter: (firm) => {
-          const jan = firm.monthlyRevenue[0];
-          const dec = firm.monthlyRevenue[11];
-          if (!jan) return undefined;
-          return (dec - jan) / jan;
-        },
+        valueGetter: yearlyRevenueGrowthJanToDec,
         rawFormatter: (firm) => {
-          const jan = firm.monthlyRevenue[0];
-          const dec = firm.monthlyRevenue[11];
-          if (!jan) return "n/a";
-          return formatPercent((dec - jan) / jan);
+          const value = yearlyRevenueGrowthJanToDec(firm);
+          return value == null ? "n/a" : formatPercent(value);
         },
       },
       {
